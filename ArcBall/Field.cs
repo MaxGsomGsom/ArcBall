@@ -1,53 +1,61 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Timers;
+using System.Windows.Forms;
 
 namespace ArcBall
 {
     class Field
     {
-        int level, lives, score, sizeX, sizeY;
+        int  sizeX, sizeY, lifes, score;
         Graphics g;
         Timer t;
         Ball ball;
         Platform platform;
         List<Block> blocks;
 
+        public event EventHandler NextLevel;
+
+
         BufferedGraphics buf;
 
-        public Field(Graphics g)
+        public Field(Graphics g, int level, int lifes, int score, int sizeX, int sizeY)
         {
             this.g = g;
-            level = 1;
-            lives=3;
-            score = 0;
-            sizeX = 600;
-            sizeY = 600;
+            this.sizeX = sizeX;
+            this.sizeY = sizeY;
+            this.lifes = lifes;
+            this.score = score;
 
             BufferedGraphicsContext context = new BufferedGraphicsContext();
             buf = context.Allocate(g, new Rectangle(0, 0, sizeX, sizeY));
 
 
-            t = new Timer(10);
-            t.Elapsed += GameStep;
+            t = new Timer();
+            t.Interval = 10;
+            t.Tick += GameStep;
 
             blocks = new List<Block>();
-            NextLevel();
+
+            LoadLevel(level);
 
             t.Start();
         }
 
 
-        void GameStep(object sender, ElapsedEventArgs e)
+
+        void GameStep(object sender, EventArgs e)
         {
             platform.Move(sizeX);
 
             bool isCollision = false;
             buf.Graphics.Clear(Color.White);
+
+            buf.Graphics.DrawRectangle(Pens.Black, 0, 0, sizeX-1, sizeY-1);
 
             foreach (Block b in blocks)
             {
@@ -55,10 +63,12 @@ namespace ArcBall
                 if (isCollision)
                 {
                     b.Damage(ball.Power);
-                    if (b.Health == 0)
+                    if (b.Health <= 0)
                     {
                         blocks.Remove(b);
+                        score += 100;
                         if (b.Bonus != Bonus.none) UseBonus(b.Bonus);
+                        if (blocks.Count == 0) NextLevel(this, new EventArgs());
                     }
 
 
@@ -113,7 +123,7 @@ namespace ArcBall
             switch (bonus)
             {
                 case Bonus.life:
-                    lives++;
+                    lifes++;
                     break;
                 case Bonus.fastPlatform:
                     platform.Speed *= 2;
@@ -147,11 +157,11 @@ namespace ArcBall
 
         private void LoseBall()
         {
-            lives--;
+            lifes--;
 
-            if (lives > 0)
+            if (lifes > 0)
             {
-                ball = new Ball(buf.Graphics, 300, 300, 20);
+                ball = new Ball(buf.Graphics, sizeX/2, 500, 20);
             }
             else
             {
@@ -160,16 +170,35 @@ namespace ArcBall
             }
         }
 
-        void NextLevel()
+        void LoadLevel(int level)
         {
-            blocks.Add(new Block(buf.Graphics, 10, 10, 500, 10, 1, Bonus.none));
-            ball = new Ball(buf.Graphics, 300, 300, 20);
-            platform = new Platform(buf.Graphics, 100, 500, 200, 20);
+            string[] lines = File.ReadAllLines("levels\\" + level + ".txt");
+
+            for (int i = 0; i < lines.Length; i++)
+            {
+                string[] line = lines[i].Split(' ');
+                blocks.Add(new Block(buf.Graphics, Convert.ToInt32(line[0]), Convert.ToInt32(line[1]), Convert.ToInt32(line[2]), Convert.ToInt32(line[3]), Convert.ToInt32(line[4]), (Bonus)Convert.ToInt32(line[5])));
+            }
+
+            ball = new Ball(buf.Graphics, sizeX / 2, 500, 20);
+            platform = new Platform(buf.Graphics, sizeX / 2 - sizeX / 8, 550, sizeX / 4, 20);
+
         }
 
 
-        Timer timer {
+        public Timer timer {
             get { return t; }
+        }
+
+
+        public int Score
+        {
+            get { return score; }
+        }
+
+        public int Lifes
+        {
+            get { return lifes; }
         }
     }
 
