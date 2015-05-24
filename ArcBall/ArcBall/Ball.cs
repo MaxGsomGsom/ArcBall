@@ -125,8 +125,8 @@ namespace ArcBall
             {
                 if (GetAsyncKeyState(0x20) != 0)
                 {
-                    x_prev = x + 1;
-                    y_prev = y + 2;
+                    x_prev = x;
+                    y_prev = y + 1;
                 }
             }
             else

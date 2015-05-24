@@ -36,12 +36,17 @@ namespace ArcBall
                 case 3: { curBrush = Brushes.Yellow; break; }
                 case 4: { curBrush = Brushes.Green; break; }
                 case 5: { curBrush = Brushes.Blue; break; }
+                case 6: { curBrush = Brushes.Purple; break; }
                 default: curBrush = Brushes.Black;
                     break;
             }
 
 
             g.FillRectangle(curBrush, (int)x, (int)y, sizeX, sizeY);
+            g.DrawRectangle(Pens.Black, (int)x, (int)y, sizeX, sizeY);
+
+            if (bonus!=Bonus.none) g.DrawString("*", new Font(FontFamily.GenericSerif, 16, FontStyle.Bold), Brushes.Black, (int)x, (int)y);
+
         }
 
 
