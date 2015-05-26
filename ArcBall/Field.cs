@@ -19,6 +19,7 @@ namespace ArcBall
         List<Block> blocks;
 
         public event EventHandler NextLevel;
+        public event EventHandler GameOver;
 
 
         BufferedGraphics buf;
@@ -63,6 +64,7 @@ namespace ArcBall
                 if (isCollision)
                 {
                     b.Damage(ball.Power);
+                    score += 100;
                     if (b.Health <= 0)
                     {
                         blocks.Remove(b);
@@ -84,15 +86,15 @@ namespace ArcBall
 
             if (!isCollision)
             {
-                isCollision = ball.TestIntersection(-1000, -1000, 1000, sizeY+1000);
+                isCollision = ball.TestIntersection(-1000, -1000, 1000-5, sizeY+1000);
             }
             if (!isCollision)
             {
-                isCollision = ball.TestIntersection(sizeX, -1000, 1000, sizeY+1000);
+                isCollision = ball.TestIntersection(sizeX+5, -1000, 1000, sizeY+1000);
             }
             if (!isCollision)
             {
-                isCollision = ball.TestIntersection(-1000, -1000, sizeX+1000, 1000);
+                isCollision = ball.TestIntersection(-1000, -1000, sizeX+1000, 1000-5);
             }
 
 
@@ -113,8 +115,11 @@ namespace ArcBall
             }
             platform.Draw();
 
-
-            buf.Render();
+            try
+            {
+                buf.Render();
+            }
+            catch { }
             
         }
 
@@ -161,11 +166,13 @@ namespace ArcBall
 
             if (lifes > 0)
             {
-                ball = new Ball(buf.Graphics, sizeX/2, 500, 20);
+                ball = new Ball(buf.Graphics, sizeX/2, sizeY*0.8, 20);
             }
             else
             {
-                timer.Stop();
+                Timer.Stop();
+                GameOver(this, new EventArgs());
+
                 
             }
         }
@@ -176,17 +183,21 @@ namespace ArcBall
 
             for (int i = 0; i < lines.Length; i++)
             {
-                string[] line = lines[i].Split(' ');
-                blocks.Add(new Block(buf.Graphics, Convert.ToInt32(line[0]), Convert.ToInt32(line[1]), Convert.ToInt32(line[2]), Convert.ToInt32(line[3]), Convert.ToInt32(line[4]), (Bonus)Convert.ToInt32(line[5])));
+                try
+                {
+                    string[] line = lines[i].Split(' ');
+                    blocks.Add(new Block(buf.Graphics, Convert.ToInt32(line[0]), Convert.ToInt32(line[1]), Convert.ToInt32(line[2]), Convert.ToInt32(line[3]), Convert.ToInt32(line[4]), (Bonus)Convert.ToInt32(line[5])));
+                }
+                catch { }
             }
 
-            ball = new Ball(buf.Graphics, sizeX / 2, 500, 20);
-            platform = new Platform(buf.Graphics, sizeX / 2 - sizeX / 8, 550, sizeX / 4, 20);
+            ball = new Ball(buf.Graphics, sizeX / 2, sizeY * 0.8, 20);
+            platform = new Platform(buf.Graphics, sizeX / 2 - sizeX / 8, sizeY * 0.9, sizeX / 4, 20);
 
         }
 
 
-        public Timer timer {
+        public Timer Timer {
             get { return t; }
         }
 
