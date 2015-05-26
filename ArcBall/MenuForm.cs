@@ -10,6 +10,7 @@ using System.Windows.Forms;
 
 namespace ArcBall
 {
+    //форма главного меню
     public partial class MenuForm : Form
     {
         public MenuForm()
@@ -17,12 +18,14 @@ namespace ArcBall
             InitializeComponent();
         }
 
+        //обработчик нажатия кнопки старт
         private void button1start_Click(object sender, EventArgs e)
         {
             GameForm game = new GameForm();
             game.Show();
         }
 
+        //обработчик нажатия кнопки помощь
         private void button3help_Click(object sender, EventArgs e)
         {
             HelpForm help = new HelpForm();

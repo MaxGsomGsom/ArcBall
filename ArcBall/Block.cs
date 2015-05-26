@@ -8,6 +8,7 @@ using System.Timers;
 
 namespace ArcBall
 {
+    //класс игрового блока
     class Block
     {
         int sizeX, sizeY, health;
@@ -15,20 +16,27 @@ namespace ArcBall
         Graphics g;
         Bonus bonus;
 
+        //конструктор
         public Block(Graphics g, double x, double y, int sizeX, int sizeY, int health, Bonus bonus)
         {
+            //тип бонуса
             this.bonus = bonus;
             this.g = g;
+            //координаты
             this.x = x;
             this.y = y;
+            //размер
             this.sizeX = sizeX;
             this.sizeY = sizeY;
+            //прочность
             this.health = health;
         }
 
+        //функция отрисовки блока
         public void Draw()
         {
             Brush curBrush;
+            //цвет зависит от прочности
             switch (health)
             {
                 case 1: { curBrush = Brushes.Red; break; }
@@ -41,16 +49,16 @@ namespace ArcBall
                     break;
             }
 
-
             g.FillRectangle(curBrush, (int)x, (int)y, sizeX, sizeY);
             g.DrawRectangle(Pens.Black, (int)x, (int)y, sizeX, sizeY);
 
+            //отрисовка звездочки, если есть бонус
             if (bonus!=Bonus.none) g.DrawString("*", new Font(FontFamily.GenericSerif, 16, FontStyle.Bold), Brushes.Black, (int)x, (int)y);
 
         }
 
 
-
+        //функция повреждения блока
         public void Damage(int power)
         {
             if (health > 0)
@@ -59,7 +67,7 @@ namespace ArcBall
             }
         }
 
-
+        //поля для доступа к свойствам из вне
         public double X
         {
             get { return x; }
