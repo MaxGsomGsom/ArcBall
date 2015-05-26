@@ -125,7 +125,7 @@ namespace ArcBall
             {
                 if (GetAsyncKeyState(0x20) != 0)
                 {
-                    x_prev = x;
+                    x_prev = x + (new Random()).Next(-2, 2);
                     y_prev = y + 1;
                 }
             }

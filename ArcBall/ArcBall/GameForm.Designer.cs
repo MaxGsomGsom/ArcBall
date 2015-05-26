@@ -1,6 +1,6 @@
 ﻿namespace ArcBall
 {
-    partial class MainForm
+    partial class GameForm
     {
         /// <summary>
         /// Required designer variable.
@@ -55,7 +55,7 @@
             // scoreLabel
             // 
             this.scoreLabel.AutoSize = true;
-            this.scoreLabel.Location = new System.Drawing.Point(526, 12);
+            this.scoreLabel.Location = new System.Drawing.Point(509, 12);
             this.scoreLabel.Name = "scoreLabel";
             this.scoreLabel.Size = new System.Drawing.Size(46, 17);
             this.scoreLabel.TabIndex = 2;
@@ -64,13 +64,13 @@
             // Levellabel
             // 
             this.Levellabel.AutoSize = true;
-            this.Levellabel.Location = new System.Drawing.Point(250, 9);
+            this.Levellabel.Location = new System.Drawing.Point(256, 12);
             this.Levellabel.Name = "Levellabel";
             this.Levellabel.Size = new System.Drawing.Size(46, 17);
             this.Levellabel.TabIndex = 3;
             this.Levellabel.Text = "label1";
             // 
-            // MainForm
+            // GameForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -83,7 +83,7 @@
             this.DoubleBuffered = true;
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.MaximizeBox = false;
-            this.Name = "MainForm";
+            this.Name = "GameForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "ArcBall";
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
