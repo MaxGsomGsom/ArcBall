@@ -10,6 +10,7 @@ using System.Windows.Forms;
 
 namespace ArcBall
 {
+    //форма помощи
     public partial class HelpForm : Form
     {
         public HelpForm()

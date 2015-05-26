@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 
 namespace ArcBall
 {
+    //класс шара
     class Ball
     {
 
@@ -19,29 +20,34 @@ namespace ArcBall
         double slideX;
         int power;
 
-
+        //функция считывает нажатую клавишу
         [DllImport("USER32.dll")]
         static extern short GetAsyncKeyState(int keyCode);
 
 
 
-
+        //конструктор
         public Ball(Graphics g, double x, double y, int radius)
         {
             this.g = g;
+            //координаты
             this.x = x;
             this.y = y;
+            //радиус
             this.radius = radius;
+            //скорость
             speed = 4;
             slideX = 0;
+            //мощность
             power = 1;
 
+            //предыдущие координаты для просчета траетории
             x_prev = x;
             y_prev = y;
 
         }
 
-
+        //поля для доступа к свойствам из вне
         public double X
         {
             get { return x; }
@@ -62,16 +68,20 @@ namespace ArcBall
             get { return y_prev; }
         }
 
+
+        //функция отрисовки шара
         public void Draw()
         {
             g.FillEllipse(Brushes.Black, (int)x, (int)y, radius, radius);
         }
 
 
+        //функция проверки толкновения с другими объектами
         public bool TestIntersection(double blockX, double blockY, double blockSizeX, double blockSizeY, bool isPlatform=false)
         {
             curCollision = Collision.none;
 
+            //если есть пересечение с объектом
             if ((x+radius) > blockX && x < (blockX + blockSizeX) && (y+radius) > blockY && y < (blockY + blockSizeY))
             {
                 double dxS = Math.Abs(blockX - (x+radius));
@@ -79,6 +89,7 @@ namespace ArcBall
                 double dyS = Math.Abs(blockY - (y+radius));
                 double dyL = Math.Abs(blockY + blockSizeY - y);
 
+                //определение стороны столкновения
                 if (dxS < dxL && dxS < dyS && dxS < dyL && !isPlatform)
                 {
                     curCollision = Collision.left;
@@ -105,22 +116,26 @@ namespace ArcBall
         }
 
 
+        //функция изменения угла движения шара, при столкновеннии с движущейся платформой
         public void Slide()
         {
+            //определение нажатия клавиши
             Keys key = Keys.None;
             if (GetAsyncKeyState(0x25) != 0) key = Keys.Left;
             else if (GetAsyncKeyState(0x27) != 0) key = Keys.Right;
 
+            //задание угла
             if (key == Keys.Left) slideX = -0.5;
             else if (key == Keys.Right) slideX = 0.5;
         }
 
-
+        //функция движения шара
         public void Move()
         {
-           
+           //определение скорости движения по предыдущим и текущим координатам
             double length = Math.Sqrt(Math.Abs(y - y_prev) * Math.Abs(y - y_prev) + Math.Abs(x - x_prev) * Math.Abs(x - x_prev));
 
+            //если скорость = 0, то ожидание нажатия клавиши пробел
             if (length == 0)
             {
                 if (GetAsyncKeyState(0x20) != 0)
@@ -129,8 +144,10 @@ namespace ArcBall
                     y_prev = y + 1;
                 }
             }
+            //если скорость ненулевая
             else
             {
+                //опредление угла движения
                 double x_buf = 0, y_buf = 0;
 
                 double y_sin = (y - y_prev) / length;
@@ -140,6 +157,7 @@ namespace ArcBall
                 slideX = 0;
                 if (y_sin < 0.1 && y_sin > -0.1) y_sin = -0.5;
 
+                //изменение направления движения в зависимости от угла движения и грани блока, на которую попал шар
                 if (curCollision == Collision.none)
                 {
                     x_buf = x_cos * speed + x;
@@ -156,7 +174,7 @@ namespace ArcBall
                     y_buf = y_sin * speed + y;
                 }
 
-
+                //установка новых координат
                 x_prev = x;
                 y_prev = y;
                 x = x_buf;
@@ -164,7 +182,7 @@ namespace ArcBall
             }
         }
 
-
+        //поля для доступа к свойствам из вне
         public int Speed
         {
             get { return speed; }

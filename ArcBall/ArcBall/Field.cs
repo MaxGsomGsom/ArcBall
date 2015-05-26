@@ -9,6 +9,7 @@ using System.Windows.Forms;
 
 namespace ArcBall
 {
+    //класс игрового поля
     class Field
     {
         int  sizeX, sizeY, lifes, score;
@@ -18,72 +19,89 @@ namespace ArcBall
         Platform platform;
         List<Block> blocks;
 
+        //события
         public event EventHandler NextLevel;
         public event EventHandler GameOver;
 
-
+        
         BufferedGraphics buf;
 
+        //конструктор
         public Field(Graphics g, int level, int lifes, int score, int sizeX, int sizeY)
         {
             this.g = g;
+            //размер поля
             this.sizeX = sizeX;
             this.sizeY = sizeY;
+            //жизни
             this.lifes = lifes;
+            //счет
             this.score = score;
 
+            //графический контекст для буферизации вывода на экран
             BufferedGraphicsContext context = new BufferedGraphicsContext();
             buf = context.Allocate(g, new Rectangle(0, 0, sizeX, sizeY));
 
-
+            //основной таймер
             t = new Timer();
             t.Interval = 10;
             t.Tick += GameStep;
 
+            //список блоков
             blocks = new List<Block>();
 
+            //загрузка уровня
             LoadLevel(level);
 
             t.Start();
         }
 
 
-
+        //функция, просчитывающая один игровой кадр
         void GameStep(object sender, EventArgs e)
         {
+            //просчет движения платформы
             platform.Move(sizeX);
 
             bool isCollision = false;
+            //заливка поля белым фоном
             buf.Graphics.Clear(Color.White);
-
             buf.Graphics.DrawRectangle(Pens.Black, 0, 0, sizeX-1, sizeY-1);
 
+            //просчет столкновений шара с блоками
             foreach (Block b in blocks)
             {
                 isCollision = ball.TestIntersection(b.X, b.Y, b.Size_X, b.Size_Y);
+                //если есть столкновение
                 if (isCollision)
                 {
+                    //повреждение блока
                     b.Damage(ball.Power);
                     score += 100;
+                    //если блок уничтожен
                     if (b.Health <= 0)
                     {
+                        //удаление блока
                         blocks.Remove(b);
                         score += 100;
+                        //применение бонуса
                         if (b.Bonus != Bonus.none) UseBonus(b.Bonus);
+                        //проверка на окончание уровня
                         if (blocks.Count == 0) NextLevel(this, new EventArgs());
                     }
-
 
                     break;
                 }
             }
 
+            //проверка столкновения шара с платформой
             if (!isCollision)
             {
                 isCollision = ball.TestIntersection(platform.X, platform.Y, platform.Size_X, platform.Size_Y, true);
                 if (isCollision) ball.Slide();
             }
 
+            //проверка столкновения со стенами поля
             if (!isCollision)
             {
                 isCollision = ball.TestIntersection(-1000, -1000, 1000-5, sizeY+1000);
@@ -97,24 +115,27 @@ namespace ArcBall
                 isCollision = ball.TestIntersection(-1000, -1000, sizeX+1000, 1000-5);
             }
 
-
+            //если шар улетел вниз, вычитание жизни
             if (ball.Y > sizeY)
             {
                 LoseBall();
             }
             else
             {
+                //просчет движения шара и его отрисовка
                 ball.Move();
                 ball.Draw();
             }
 
-
+            //отрисовка блоков
             foreach (Block b in blocks)
             {
                 b.Draw(); 
             }
+            //отрисовка платформы
             platform.Draw();
 
+            //рендеринг кадра
             try
             {
                 buf.Render();
@@ -123,6 +144,7 @@ namespace ArcBall
             
         }
 
+        //функция применения бонуса в зависимости от свойства блока
         private void UseBonus(Bonus bonus)
         {
             switch (bonus)
@@ -160,6 +182,7 @@ namespace ArcBall
             }
         }
 
+        //функция потери шара
         private void LoseBall()
         {
             lifes--;
@@ -168,6 +191,7 @@ namespace ArcBall
             {
                 ball = new Ball(buf.Graphics, sizeX/2, sizeY*0.8, 20);
             }
+            //если жизней больше нет - конец игры
             else
             {
                 Timer.Stop();
@@ -177,10 +201,15 @@ namespace ArcBall
             }
         }
 
+        //функция загрузки уровня из файла
+        //уровень состоит из списка блоков
+        //каждый блок описывается строкой в файле: координата Х - координата У - ширина - высота - прочность - тип бонуса
         void LoadLevel(int level)
         {
+            //считывание всех строк
             string[] lines = File.ReadAllLines("levels\\" + level + ".txt");
 
+            //парсинг каждой строки и создание блока
             for (int i = 0; i < lines.Length; i++)
             {
                 try
@@ -191,12 +220,13 @@ namespace ArcBall
                 catch { }
             }
 
+            //создание шара и платформы
             ball = new Ball(buf.Graphics, sizeX / 2, sizeY * 0.8, 20);
             platform = new Platform(buf.Graphics, sizeX / 2 - sizeX / 8, sizeY * 0.9, sizeX / 4, 20);
 
         }
 
-
+        //поля для доступа к свойствам из вне
         public Timer Timer {
             get { return t; }
         }
