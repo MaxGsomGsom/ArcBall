@@ -53,7 +53,7 @@ namespace ArcBall
             g.DrawRectangle(Pens.Black, (int)x, (int)y, sizeX, sizeY);
 
             //отрисовка звездочки, если есть бонус
-            if (bonus!=Bonus.none) g.DrawString("*", new Font(FontFamily.GenericSerif, 16, FontStyle.Bold), Brushes.Black, (int)x, (int)y);
+            if (bonus != Bonus.none) g.DrawString("●", new Font(FontFamily.GenericSerif, 16, FontStyle.Bold), Brushes.Black, (int)x, (int)y);
 
         }
 
