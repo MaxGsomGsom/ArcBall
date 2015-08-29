@@ -56,6 +56,7 @@
             this.ClientSize = new System.Drawing.Size(453, 393);
             this.Controls.Add(this.textBox1);
             this.Name = "HelpForm";
+            this.ShowIcon = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Help";
             this.ResumeLayout(false);
