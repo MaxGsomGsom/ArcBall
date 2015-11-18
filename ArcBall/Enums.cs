@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace ArcBall
 {
     //перечисление бонусов
-    enum Bonus
+    public enum Bonus
     {
         none = 0,
         life = 1,
@@ -23,7 +23,7 @@ namespace ArcBall
     }
 
     //перечисление нажатых кнопок
-    enum Keys
+    public enum Keys
     {
         None = 0,
         Left = 1,
@@ -31,7 +31,7 @@ namespace ArcBall
     }
 
     //перечисление сторон блока, с которыми может столкнуться шар
-    enum Collision
+    public enum Collision
     {
         none = 0,
         top = 1,

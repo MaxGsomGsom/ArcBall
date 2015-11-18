@@ -1,4 +1,6 @@
-﻿using System;
+﻿#define TEST 
+
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
@@ -6,24 +8,35 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 
+
 namespace ArcBall
 {
     //класс шара
-    class Ball
+    public class Ball
     {
 
-        int radius;
-        double x, y, x_prev, y_prev;
-        int speed;
-        Graphics g;
-        Collision curCollision;
-        double slideX;
-        int power;
+        int radius; //диаметр шара
+        double x, y, x_prev, y_prev; //координаты на текущем и предпоследнем шаге
+        int speed; //скорость
+        Graphics g; //объект для отрисовки
+        Collision curCollision; //индикатор столкновения с объектом
+        double slideX; //скольжение по оси х
+        int power; //сила удара шара
+
 
         //функция считывает нажатую клавишу
+#if !TEST
         [DllImport("USER32.dll")]
         static extern short GetAsyncKeyState(int keyCode);
-
+#else
+        public Dictionary<int, short> keyPressed = new Dictionary<int, short>();
+        public short GetAsyncKeyState(int keyCode)
+        {
+            if (keyPressed.ContainsKey(keyCode))
+                return keyPressed[keyCode];
+            else return 0;
+        }
+#endif
 
 
         //конструктор
@@ -47,36 +60,13 @@ namespace ArcBall
 
         }
 
-        //поля для доступа к свойствам из вне
-        public double X
-        {
-            get { return x; }
-        }
-
-        public double Y
-        {
-            get { return y; }
-        }
-
-        public double X_prev
-        {
-            get { return x_prev; }
-        }
-
-        public double Y_prev
-        {
-            get { return y_prev; }
-        }
-
-
         //функция отрисовки шара
         public void Draw()
         {
             g.FillEllipse(Brushes.Black, (int)x, (int)y, radius, radius);
         }
 
-
-        //функция проверки толкновения с другими объектами
+        //функция проверки столкновения с другими объектами
         public bool TestIntersection(double blockX, double blockY, double blockSizeX, double blockSizeY, bool isPlatform=false)
         {
             curCollision = Collision.none;
@@ -114,7 +104,6 @@ namespace ArcBall
 
             
         }
-
 
         //функция изменения угла движения шара, при столкновеннии с движущейся платформой
         public void Slide()
@@ -182,7 +171,30 @@ namespace ArcBall
             }
         }
 
-        //поля для доступа к свойствам из вне
+        //поля для доступа к свойствам извне
+        #region Fields
+        public double X
+        {
+            get { return x; }
+        }
+
+        public double Y
+        {
+            get { return y; }
+        }
+
+        public double X_prev
+        {
+            get { return x_prev; }
+            set { x_prev = value; }
+        }
+
+        public double Y_prev
+        {
+            get { return y_prev; }
+            set { y_prev = value; }
+        }
+
         public int Speed
         {
             get { return speed; }
@@ -195,11 +207,18 @@ namespace ArcBall
             set { radius = value; }
         }
 
-
-        public int Power 
+        public int Power
         {
             get { return power; }
             set { power = value; }
         }
+
+        public Collision Collision
+        {
+            get { return curCollision; }
+            set { curCollision = value; }
+
+        } 
+        #endregion
     }
 }
