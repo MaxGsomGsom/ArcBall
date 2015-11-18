@@ -3,7 +3,7 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
-
+using System.Runtime.InteropServices;
 
 namespace ArcBall
 {
@@ -21,11 +21,11 @@ namespace ArcBall
 
 
         //функция считывает нажатую клавишу
+        public Dictionary<int, short> keyPressed = new Dictionary<int, short>();
 #if !TEST
         [DllImport("USER32.dll")]
         static extern short GetAsyncKeyState(int keyCode);
 #else
-        public Dictionary<int, short> keyPressed = new Dictionary<int, short>();
         public short GetAsyncKeyState(int keyCode)
         {
             if (keyPressed.ContainsKey(keyCode))
@@ -133,7 +133,7 @@ namespace ArcBall
                 y_prev = y + 1;
             }
             //если скорость ненулевая
-            else
+            else if (length != 0)
             {
                 //опредление угла движения
                 double x_buf = 0, y_buf = 0; // 4
