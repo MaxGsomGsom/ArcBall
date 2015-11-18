@@ -1,9 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2013
-VisualStudioVersion = 12.0.31101.0
+# Visual Studio 14
+VisualStudioVersion = 14.0.23107.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ArcBall", "ArcBall\ArcBall.csproj", "{46EF6D73-D22A-49ED-8C1C-A01D7E4033C2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnitTestProject", "UnitTestProject\UnitTestProject.csproj", "{B959B3CB-3CDC-43E4-96A5-C93FDF92B8C7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{46EF6D73-D22A-49ED-8C1C-A01D7E4033C2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{46EF6D73-D22A-49ED-8C1C-A01D7E4033C2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{46EF6D73-D22A-49ED-8C1C-A01D7E4033C2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B959B3CB-3CDC-43E4-96A5-C93FDF92B8C7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B959B3CB-3CDC-43E4-96A5-C93FDF92B8C7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B959B3CB-3CDC-43E4-96A5-C93FDF92B8C7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B959B3CB-3CDC-43E4-96A5-C93FDF92B8C7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
