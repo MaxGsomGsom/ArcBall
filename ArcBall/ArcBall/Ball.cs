@@ -1,12 +1,8 @@
-﻿#define TEST 
+﻿//#define TEST 
 
 using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
-using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
 
 
 namespace ArcBall
@@ -42,65 +38,67 @@ namespace ArcBall
         //конструктор
         public Ball(Graphics g, double x, double y, int radius)
         {
-            this.g = g;
+            this.g = g; // 1
             //координаты
-            this.x = x;
-            this.y = y;
+            this.x = x; 
+            this.y = y; 
             //радиус
-            this.radius = radius;
+            this.radius = radius; 
             //скорость
-            speed = 4;
-            slideX = 0;
+            speed = 4; 
+            slideX = 0; 
             //мощность
-            power = 1;
+            power = 1; 
 
             //предыдущие координаты для просчета траетории
-            x_prev = x;
-            y_prev = y;
+            x_prev = x; 
+            y_prev = y; 
 
         }
 
         //функция отрисовки шара
         public void Draw()
         {
-            g.FillEllipse(Brushes.Black, (int)x, (int)y, radius, radius);
+            g.FillEllipse(Brushes.Black, (int)x, (int)y, radius, radius); // 1
         }
 
         //функция проверки столкновения с другими объектами
         public bool TestIntersection(double blockX, double blockY, double blockSizeX, double blockSizeY, bool isPlatform=false)
         {
-            curCollision = Collision.none;
+            curCollision = Collision.none; // 1
 
             //если есть пересечение с объектом
-            if ((x+radius) > blockX && x < (blockX + blockSizeX) && (y+radius) > blockY && y < (blockY + blockSizeY))
+            if ((x+radius) > blockX && x < (blockX + blockSizeX) && (y+radius) > blockY && y < (blockY + blockSizeY)) // 2
             {
-                double dxS = Math.Abs(blockX - (x+radius));
-                double dxL = Math.Abs(blockX + blockSizeX - x);
-                double dyS = Math.Abs(blockY - (y+radius));
+                double dxS = Math.Abs(blockX - (x+radius)); // 3
+                double dxL = Math.Abs(blockX + blockSizeX - x); 
+                double dyS = Math.Abs(blockY - (y+radius)); 
                 double dyL = Math.Abs(blockY + blockSizeY - y);
 
                 //определение стороны столкновения
-                if (dxS < dxL && dxS < dyS && dxS < dyL && !isPlatform)
+                if (dxS < dxL && dxS < dyS && dxS < dyL && !isPlatform) // 4
                 {
-                    curCollision = Collision.left;
+                    curCollision = Collision.left; // 5
                 }
-                else if (dxL < dxS && dxL < dyS && dxL < dyL && !isPlatform)
+                else if (dxL < dxS && dxL < dyS && dxL < dyL && !isPlatform) // 6
                 {
-                    curCollision = Collision.right;
+                    curCollision = Collision.right; // 7
                 }
-                else if (dyS < dxS && dyS < dxL && dyS < dyL)
+                else if (dyS < dxS && dyS < dxL && dyS < dyL) // 8
                 {
-                    curCollision = Collision.top;
+                    curCollision = Collision.top; // 9
                 }
-                else if (!isPlatform)
+                else if (!isPlatform) // 10
                 {
-                    curCollision = Collision.bottom;
+                    curCollision = Collision.bottom; // 11
                 }
 
             }
 
-            if (curCollision != Collision.none) return true;
-            else return false;
+            if (curCollision != Collision.none) // 12
+                return true; // 13
+            else
+                return false; //14
 
             
         }
@@ -109,62 +107,64 @@ namespace ArcBall
         public void Slide()
         {
             //определение нажатия клавиши
-            Keys key = Keys.None;
-            if (GetAsyncKeyState(0x25) != 0) key = Keys.Left;
-            else if (GetAsyncKeyState(0x27) != 0) key = Keys.Right;
+            Keys key = Keys.None; // 1
+            if (GetAsyncKeyState(0x25) != 0) // 2
+                key = Keys.Left; // 3
+            else if (GetAsyncKeyState(0x27) != 0) // 4
+                key = Keys.Right; // 5
 
             //задание угла
-            if (key == Keys.Left) slideX = -0.5;
-            else if (key == Keys.Right) slideX = 0.5;
+            if (key == Keys.Left) // 6
+                slideX = -0.5; // 7
+            else if (key == Keys.Right) // 8
+                slideX = 0.5; // 9
         }
 
         //функция движения шара
         public void Move()
         {
            //определение скорости движения по предыдущим и текущим координатам
-            double length = Math.Sqrt(Math.Abs(y - y_prev) * Math.Abs(y - y_prev) + Math.Abs(x - x_prev) * Math.Abs(x - x_prev));
+            double length = Math.Sqrt(Math.Abs(y - y_prev) * Math.Abs(y - y_prev) + Math.Abs(x - x_prev) * Math.Abs(x - x_prev)); // 1
 
             //если скорость = 0, то ожидание нажатия клавиши пробел
-            if (length == 0)
+            if (length == 0 && GetAsyncKeyState(0x20) != 0) // 2
             {
-                if (GetAsyncKeyState(0x20) != 0)
-                {
-                    x_prev = x + (new Random()).Next(-2, 2);
-                    y_prev = y + 1;
-                }
+                x_prev = x + (new Random()).Next(-2, 2); // 3
+                y_prev = y + 1;
             }
             //если скорость ненулевая
             else
             {
                 //опредление угла движения
-                double x_buf = 0, y_buf = 0;
+                double x_buf = 0, y_buf = 0; // 4
 
                 double y_sin = (y - y_prev) / length;
                 double x_cos = (x - x_prev) / length;
 
                 x_cos += slideX;
                 slideX = 0;
-                if (y_sin < 0.1 && y_sin > -0.1) y_sin = -0.5;
+                if (y_sin < 0.1 && y_sin > -0.1) // 5
+                    y_sin = -0.5; // 6
 
                 //изменение направления движения в зависимости от угла движения и грани блока, на которую попал шар
-                if (curCollision == Collision.none)
+                if (curCollision == Collision.none) // 7
                 {
-                    x_buf = x_cos * speed + x;
+                    x_buf = x_cos * speed + x; // 8
                     y_buf = y_sin * speed + y;
                 }
-                else if (curCollision == Collision.bottom || curCollision == Collision.top)
+                else if (curCollision == Collision.bottom || curCollision == Collision.top) // 9
                 {
-                    x_buf = x_cos * speed + x;
+                    x_buf = x_cos * speed + x; // 10
                     y_buf = -y_sin * speed + y;
                 }
-                else if (curCollision == Collision.left || curCollision == Collision.right)
+                else if (curCollision == Collision.left || curCollision == Collision.right) // 11
                 {
-                    x_buf = -x_cos * speed + x;
+                    x_buf = -x_cos * speed + x; // 12
                     y_buf = y_sin * speed + y;
                 }
 
                 //установка новых координат
-                x_prev = x;
+                x_prev = x; // 13
                 y_prev = y;
                 x = x_buf;
                 y = y_buf;
