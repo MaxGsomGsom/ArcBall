@@ -116,7 +116,7 @@ namespace ArcBall
             }
 
             //если шар улетел вниз, вычитание жизни
-            if (ball.Y > sizeY)
+            if (ball.Y > sizeY || ball.Y<-100 || ball.X<-100 || ball.X>sizeX+100)
             {
                 LoseBall();
             }

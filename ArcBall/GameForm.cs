@@ -45,6 +45,7 @@ namespace ArcBall
         //обработчик события окончания игры
         void f_GameOver(object sender, EventArgs e)
         {
+            lifesLabel.Text = "Жизни: " + f.Lifes;
             MessageBox.Show("Игра окончена.\nВаш счёт: " + f.Score, "Игра окончена");
             this.Close();
         }
