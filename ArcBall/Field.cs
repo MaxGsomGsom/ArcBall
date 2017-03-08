@@ -3,27 +3,30 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
+[assembly: InternalsVisibleTo("UnitTestProject")]
 namespace ArcBall
 {
     //класс игрового поля
-    class Field
+    public class Field : IField
     {
-        int  sizeX, sizeY, lifes, score;
+        int sizeX, sizeY, lifes, score;
         Graphics g;
         Timer t;
         Ball ball;
         Platform platform;
-        List<Block> blocks;
+        List<IBlock> blocks;
+        Block leftWall, rightWall, topWall;
 
         //события
         public event EventHandler NextLevel;
         public event EventHandler GameOver;
 
-        
+
         BufferedGraphics buf;
 
         //конструктор
@@ -48,30 +51,34 @@ namespace ArcBall
             t.Tick += GameStep;
 
             //список блоков
-            blocks = new List<Block>();
+            blocks = new List<IBlock>();
 
             //загрузка уровня
             LoadLevel(level);
+
+            leftWall = new Block(g, -1000, -1000, 1000 - 5, sizeY + 1000, int.MaxValue);
+            rightWall = new Block(g, sizeX + 5, -1000, 1000, sizeY + 1000, int.MaxValue);
+            topWall = new Block(g, -1000, -1000, sizeX + 1000, 1000 - 5, int.MaxValue);
 
             t.Start();
         }
 
 
         //функция, просчитывающая один игровой кадр
-        void GameStep(object sender, EventArgs e)
+        private void GameStep(object sender, EventArgs e)
         {
             //просчет движения платформы
-            platform.Move(sizeX);
+            platform.Move();
 
             bool isCollision = false;
             //заливка поля белым фоном
             buf.Graphics.Clear(Color.White);
-            buf.Graphics.DrawRectangle(Pens.Black, 0, 0, sizeX-1, sizeY-1);
+            buf.Graphics.DrawRectangle(Pens.Black, 0, 0, sizeX - 1, sizeY - 1);
 
             //просчет столкновений шара с блоками
-            foreach (Block b in blocks)
+            foreach (IBlock b in blocks)
             {
-                isCollision = ball.TestIntersection(b.X, b.Y, b.Size_X, b.Size_Y);
+                isCollision = ball.TestIntersection(b);
                 //если есть столкновение
                 if (isCollision)
                 {
@@ -85,7 +92,7 @@ namespace ArcBall
                         blocks.Remove(b);
                         score += 100;
                         //применение бонуса
-                        if (b.Bonus != Bonus.none) UseBonus(b.Bonus);
+                        if (b is IBonusBlock) (b as IBonusBlock).ActivateBonus(this);
                         //проверка на окончание уровня
                         if (blocks.Count == 0) NextLevel(this, new EventArgs());
                     }
@@ -97,26 +104,26 @@ namespace ArcBall
             //проверка столкновения шара с платформой
             if (!isCollision)
             {
-                isCollision = ball.TestIntersection(platform.X, platform.Y, platform.Size_X, platform.Size_Y, true);
+                isCollision = ball.TestIntersection(platform);
                 if (isCollision) ball.Slide();
             }
 
             //проверка столкновения со стенами поля
             if (!isCollision)
             {
-                isCollision = ball.TestIntersection(-1000, -1000, 1000-5, sizeY+1000);
+                isCollision = ball.TestIntersection(leftWall);
             }
             if (!isCollision)
             {
-                isCollision = ball.TestIntersection(sizeX+5, -1000, 1000, sizeY+1000);
+                isCollision = ball.TestIntersection(rightWall);
             }
             if (!isCollision)
             {
-                isCollision = ball.TestIntersection(-1000, -1000, sizeX+1000, 1000-5);
+                isCollision = ball.TestIntersection(topWall);
             }
 
             //если шар улетел вниз, вычитание жизни
-            if (ball.Y > sizeY || ball.Y<-100 || ball.X<-100 || ball.X>sizeX+100)
+            if (ball.Y > sizeY || ball.Y < -100 || ball.X < -100 || ball.X > sizeX + 100)
             {
                 LoseBall();
             }
@@ -128,9 +135,9 @@ namespace ArcBall
             }
 
             //отрисовка блоков
-            foreach (Block b in blocks)
+            foreach (IBlock b in blocks)
             {
-                b.Draw(); 
+                b.Draw();
             }
             //отрисовка платформы
             platform.Draw();
@@ -141,46 +148,9 @@ namespace ArcBall
                 buf.Render();
             }
             catch { }
-            
+
         }
 
-        //функция применения бонуса в зависимости от свойства блока
-        private void UseBonus(Bonus bonus)
-        {
-            switch (bonus)
-            {
-                case Bonus.life:
-                    lifes++;
-                    break;
-                case Bonus.fastPlatform:
-                    platform.Speed *= 2;
-                    break;
-                case Bonus.slowPlatform:
-                    platform.Speed /= 2;
-                    break;
-                case Bonus.fastBall:
-                    ball.Speed *= 2;
-                    break;
-                case Bonus.slowBall:
-                    ball.Speed /= 2;
-                    break;
-                case Bonus.bigPlatform:
-                    platform.Size_X *= 2;
-                    break;
-                case Bonus.smallPlatform:
-                    platform.Size_X /= 2;
-                    break;
-                case Bonus.bigBall:
-                    ball.Radius *= 2;
-                    break;
-                case Bonus.smallBall:
-                    ball.Radius /= 2;
-                    break;
-                case Bonus.strongBall:
-                    ball.Power *= 2;
-                    break;
-            }
-        }
 
         //функция потери шара
         private void LoseBall()
@@ -189,7 +159,7 @@ namespace ArcBall
 
             if (lifes > 0)
             {
-                ball = new Ball(buf.Graphics, sizeX/2, sizeY*0.8, 20);
+                ball = new Ball(buf.Graphics, sizeX / 2, sizeY * 0.8, 20);
             }
             //если жизней больше нет - конец игры
             else
@@ -197,14 +167,14 @@ namespace ArcBall
                 Timer.Stop();
                 GameOver(this, new EventArgs());
 
-                
+
             }
         }
 
         //функция загрузки уровня из файла
         //уровень состоит из списка блоков
         //каждый блок описывается строкой в файле: координата Х - координата У - ширина - высота - прочность - тип бонуса
-        void LoadLevel(int level)
+        private void LoadLevel(int level)
         {
             //считывание всех строк
             string[] lines = File.ReadAllLines("levels\\" + level + ".txt");
@@ -215,19 +185,24 @@ namespace ArcBall
                 try
                 {
                     string[] line = lines[i].Split(' ');
-                    blocks.Add(new Block(buf.Graphics, Convert.ToInt32(line[0]), Convert.ToInt32(line[1]), Convert.ToInt32(line[2]), Convert.ToInt32(line[3]), Convert.ToInt32(line[4]), (Bonus)Convert.ToInt32(line[5])));
+
+                    if (line.Length == 5 || Convert.ToInt32(line[5]) == 0)
+                        blocks.Add(new Block(buf.Graphics, Convert.ToInt32(line[0]), Convert.ToInt32(line[1]), Convert.ToInt32(line[2]), Convert.ToInt32(line[3]), Convert.ToInt32(line[4])));
+                    else
+                        blocks.Add(new BonusBlock(buf.Graphics, Convert.ToInt32(line[0]), Convert.ToInt32(line[1]), Convert.ToInt32(line[2]), Convert.ToInt32(line[3]), Convert.ToInt32(line[4]), (Bonus)Convert.ToInt32(line[5])));
                 }
                 catch { }
             }
 
             //создание шара и платформы
             ball = new Ball(buf.Graphics, sizeX / 2, sizeY * 0.8, 20);
-            platform = new Platform(buf.Graphics, sizeX / 2 - sizeX / 8, sizeY * 0.9, sizeX / 4, 20);
+            platform = new Platform(buf.Graphics, sizeX / 2 - sizeX / 8, sizeY * 0.9, sizeX / 4, 20, sizeX);
 
         }
 
         //поля для доступа к свойствам из вне
-        public Timer Timer {
+        public Timer Timer
+        {
             get { return t; }
         }
 
@@ -240,6 +215,22 @@ namespace ArcBall
         public int Lifes
         {
             get { return lifes; }
+            set { lifes = value; }
+        }
+
+        public IBall Ball
+        {
+            get { return ball; }
+        }
+
+        public IPlatform Platform
+        {
+            get { return platform; }
+        }
+
+        public IList<IBlock> Blocks
+        {
+            get { return blocks; }
         }
     }
 

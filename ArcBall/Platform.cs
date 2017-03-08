@@ -9,20 +9,23 @@ using System.Windows.Forms;
 
 namespace ArcBall
 {
+
     //класс управляемой игроком платформы
-    class Platform
+    public class Platform : IPlatform
     {
 
         int sizeX, sizeY, speed;
         double x, y;
         Graphics g;
 
+        int fieldSizeX;
+
         //функция считывает нажатую клавишу
         [DllImport("USER32.dll")]
         static extern short GetAsyncKeyState(int keyCode);
 
         //конструктор
-        public Platform(Graphics g, double x, double y, int sizeX, int sizeY)
+        public Platform(Graphics g, double x, double y, int sizeX, int sizeY, int fieldSizeX)
         {
             this.g = g;
             //координаты
@@ -33,6 +36,8 @@ namespace ArcBall
             this.sizeY = sizeY;
             //скорость
             speed = 2;
+
+            this.fieldSizeX = fieldSizeX;
         }
 
         //функция отрисовки
@@ -61,6 +66,7 @@ namespace ArcBall
         public int Size_Y
         {
             get { return sizeY; }
+            set { sizeX = value; }
         }
 
         public int Speed
@@ -70,15 +76,15 @@ namespace ArcBall
         }
 
         //функция передвижения платформы в зависимости от нажатой клавиши
-        internal void Move(int fieldSizeX)
+        public void Move()
         {
             //определение клавиши
-            Keys key=Keys.None;
-            if (GetAsyncKeyState(0x25)!=0) key=Keys.Left;
+            Keys key = Keys.None;
+            if (GetAsyncKeyState(0x25) != 0) key = Keys.Left;
             else if (GetAsyncKeyState(0x27) != 0) key = Keys.Right;
 
             //задание скорости движения
-            if (key == Keys.Left && x>0)
+            if (key == Keys.Left && x > 0)
             {
                 x -= speed;
             }
@@ -91,5 +97,5 @@ namespace ArcBall
     }
 
 
-    
+
 }
