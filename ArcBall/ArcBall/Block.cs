@@ -9,18 +9,16 @@ using System.Timers;
 namespace ArcBall
 {
     //класс игрового блока
-    class Block
+    public class Block : IBlock
     {
-        int sizeX, sizeY, health;
-        double x, y;
-        Graphics g;
-        Bonus bonus;
+        protected int sizeX, sizeY, health;
+        protected double x, y;
+        protected Graphics g;
+
 
         //конструктор
-        public Block(Graphics g, double x, double y, int sizeX, int sizeY, int health, Bonus bonus)
+        public Block(Graphics g, double x, double y, int sizeX, int sizeY, int health)
         {
-            //тип бонуса
-            this.bonus = bonus;
             this.g = g;
             //координаты
             this.x = x;
@@ -45,16 +43,13 @@ namespace ArcBall
                 case 4: { curBrush = Brushes.Green; break; }
                 case 5: { curBrush = Brushes.Blue; break; }
                 case 6: { curBrush = Brushes.Purple; break; }
-                default: curBrush = Brushes.Black;
+                default:
+                    curBrush = Brushes.Black;
                     break;
             }
 
             g.FillRectangle(curBrush, (int)x, (int)y, sizeX, sizeY);
             g.DrawRectangle(Pens.Black, (int)x, (int)y, sizeX, sizeY);
-
-            //отрисовка звездочки, если есть бонус
-            if (bonus != Bonus.none) g.DrawString("●", new Font(FontFamily.GenericSerif, 16, FontStyle.Bold), Brushes.Black, (int)x, (int)y);
-
         }
 
 
@@ -63,7 +58,7 @@ namespace ArcBall
         {
             if (health > 0)
             {
-                health-=power;
+                health -= power;
             }
         }
 
@@ -78,14 +73,16 @@ namespace ArcBall
             get { return y; }
         }
 
-        public double Size_X
+        public int Size_X
         {
             get { return sizeX; }
+            set { sizeX = value; }
         }
 
-        public double Size_Y
+        public int Size_Y
         {
             get { return sizeY; }
+            set { sizeX = value; }
         }
 
         public int Health
@@ -93,12 +90,6 @@ namespace ArcBall
             get { return health; }
         }
 
-        public Bonus Bonus
-        {
-            get { return bonus; }
-        }
     }
 
-
-  
 }

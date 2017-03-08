@@ -8,7 +8,7 @@ using System.Runtime.InteropServices;
 namespace ArcBall
 {
     //класс шара
-    public class Ball
+    public class Ball : IBall
     {
 
         int radius; //диаметр шара
@@ -21,12 +21,12 @@ namespace ArcBall
 
 
         //функция считывает нажатую клавишу
-        public Dictionary<int, short> keyPressed = new Dictionary<int, short>();
+        internal Dictionary<int, short> keyPressed = new Dictionary<int, short>();
 #if !TEST
         [DllImport("USER32.dll")]
         static extern short GetAsyncKeyState(int keyCode);
 #else
-        public short GetAsyncKeyState(int keyCode)
+        internal short GetAsyncKeyState(int keyCode)
         {
             if (keyPressed.ContainsKey(keyCode))
                 return keyPressed[keyCode];
@@ -40,19 +40,19 @@ namespace ArcBall
         {
             this.g = g; // 1
             //координаты
-            this.x = x; 
-            this.y = y; 
+            this.x = x;
+            this.y = y;
             //радиус
-            this.radius = radius; 
+            this.radius = radius;
             //скорость
-            speed = 4; 
-            slideX = 0; 
+            speed = 4;
+            slideX = 0;
             //мощность
-            power = 1; 
+            power = 1;
 
             //предыдущие координаты для просчета траетории
-            x_prev = x; 
-            y_prev = y; 
+            x_prev = x;
+            y_prev = y;
 
         }
 
@@ -63,24 +63,24 @@ namespace ArcBall
         }
 
         //функция проверки столкновения с другими объектами
-        public bool TestIntersection(double blockX, double blockY, double blockSizeX, double blockSizeY, bool isPlatform=false)
+        public bool TestIntersection(IGameObjectSquare obj)
         {
             curCollision = Collision.none; // 1
 
             //если есть пересечение с объектом
-            if ((x+radius) > blockX && x < (blockX + blockSizeX) && (y+radius) > blockY && y < (blockY + blockSizeY)) // 2
+            if ((x + radius) > obj.X && x < (obj.X + obj.Size_X) && (y + radius) > obj.Y && y < (obj.Y + obj.Size_Y)) // 2
             {
-                double dxS = Math.Abs(blockX - (x+radius)); // 3
-                double dxL = Math.Abs(blockX + blockSizeX - x); 
-                double dyS = Math.Abs(blockY - (y+radius)); 
-                double dyL = Math.Abs(blockY + blockSizeY - y);
+                double dxS = Math.Abs(obj.X - (x + radius)); // 3
+                double dxL = Math.Abs(obj.X + obj.Size_X - x);
+                double dyS = Math.Abs(obj.Y - (y + radius));
+                double dyL = Math.Abs(obj.Y + obj.Size_Y - y);
 
                 //определение стороны столкновения
-                if (dxS < dxL && dxS < dyS && dxS < dyL && !isPlatform) // 4
+                if (dxS < dxL && dxS < dyS && dxS < dyL && !(obj is IPlatform)) // 4
                 {
                     curCollision = Collision.left; // 5
                 }
-                else if (dxL < dxS && dxL < dyS && dxL < dyL && !isPlatform) // 6
+                else if (dxL < dxS && dxL < dyS && dxL < dyL && !(obj is IPlatform)) // 6
                 {
                     curCollision = Collision.right; // 7
                 }
@@ -88,7 +88,7 @@ namespace ArcBall
                 {
                     curCollision = Collision.top; // 9
                 }
-                else if (!isPlatform) // 10
+                else if (!(obj is IPlatform)) // 10
                 {
                     curCollision = Collision.bottom; // 11
                 }
@@ -100,7 +100,7 @@ namespace ArcBall
             else
                 return false; //14
 
-            
+
         }
 
         //функция изменения угла движения шара, при столкновеннии с движущейся платформой
@@ -123,7 +123,7 @@ namespace ArcBall
         //функция движения шара
         public void Move()
         {
-           //определение скорости движения по предыдущим и текущим координатам
+            //определение скорости движения по предыдущим и текущим координатам
             double length = Math.Sqrt(Math.Abs(y - y_prev) * Math.Abs(y - y_prev) + Math.Abs(x - x_prev) * Math.Abs(x - x_prev)); // 1
 
             //если скорость = 0, то ожидание нажатия клавиши пробел
@@ -183,13 +183,13 @@ namespace ArcBall
             get { return y; }
         }
 
-        public double X_prev
+        internal double X_prev
         {
             get { return x_prev; }
             set { x_prev = value; }
         }
 
-        public double Y_prev
+        internal double Y_prev
         {
             get { return y_prev; }
             set { y_prev = value; }
@@ -213,12 +213,12 @@ namespace ArcBall
             set { power = value; }
         }
 
-        public Collision Collision
+        internal Collision Collision
         {
             get { return curCollision; }
             set { curCollision = value; }
 
-        } 
+        }
         #endregion
     }
 }

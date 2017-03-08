@@ -242,7 +242,9 @@ namespace UnitTestProject
             b.Collision = Collision.none;
             b.Y_prev = b.Y - 1;
 
-            b.TestIntersection(b.X, b.Y+10-1, 20, 20);
+            Block block = new Block(g, b.X, b.Y + 10 - 1, 20, 20, 1);
+
+            b.TestIntersection(block);
             
 
             Assert.IsTrue(b.Collision == Collision.top);
@@ -255,7 +257,9 @@ namespace UnitTestProject
             b.Collision = Collision.none;
             b.Y_prev = b.Y + 1;
 
-            b.TestIntersection(b.X, b.Y - 20 + 1, 20, 20);
+            Block block = new Block(g, b.X, b.Y - 20 + 1, 20, 20, 1);
+
+            b.TestIntersection(block);
 
 
             Assert.IsTrue(b.Collision == Collision.bottom);
@@ -268,7 +272,9 @@ namespace UnitTestProject
             b.Collision = Collision.none;
             b.X_prev = b.X - 1;
 
-            b.TestIntersection(b.X+10-1, b.Y, 20, 20);
+            Block block = new Block(g, b.X + 10 - 1, b.Y, 20, 20, 1);
+
+            b.TestIntersection(block);
 
 
             Assert.IsTrue(b.Collision == Collision.left);
@@ -281,7 +287,9 @@ namespace UnitTestProject
             b.Collision = Collision.none;
             b.X_prev = b.X + 1;
 
-            b.TestIntersection(b.X - 20 + 1, b.Y, 20, 20);
+            Block block = new Block(g, b.X - 20 + 1, b.Y, 20, 20, 1);
+
+            b.TestIntersection(block);
 
 
             Assert.IsTrue(b.Collision == Collision.right);
@@ -295,7 +303,9 @@ namespace UnitTestProject
             b.Y_prev = b.Y - 1;
             b.X_prev = b.X - 1;
 
-            b.TestIntersection(0, 0, 20, 20);
+            Block block = new Block(g, 0, 0, 20, 20, 1);
+
+            b.TestIntersection(block);
 
 
             Assert.IsTrue(b.Collision == Collision.none);
