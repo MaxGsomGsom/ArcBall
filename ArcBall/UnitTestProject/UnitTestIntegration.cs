@@ -28,7 +28,6 @@ namespace UnitTestProject
             app = new Application("..\\..\\..\\ArcBall\\bin\\Debug\\ArcBall.exe");
             app.Start();
 
-
         }
 
 
@@ -83,20 +82,26 @@ namespace UnitTestProject
 
             winGame.SetFocus();
 
+
             //нажатие кнопокпробел, вправо, влево
-            //пока не потратятся все жизни
+            //пока не потратятся все жизни   
             while (Convert.ToInt32(lifes.Properties.Name.Substring(7)) > 0)
             {
-                input.Keyboard.KeyPress(VirtualKeyCode.SPACE);
+                input.Keyboard.KeyDown(VirtualKeyCode.SPACE);
+                input.Keyboard.Sleep(1000);
+                input.Keyboard.KeyUp(VirtualKeyCode.SPACE);
 
-                input.Keyboard.KeyUp(VirtualKeyCode.RIGHT);
-                input.Keyboard.KeyDown(VirtualKeyCode.LEFT);
-                Thread.Sleep(1000);
-                input.Keyboard.KeyUp(VirtualKeyCode.LEFT);
                 input.Keyboard.KeyDown(VirtualKeyCode.RIGHT);
-                Thread.Sleep(1000);
+                input.Keyboard.Sleep(1000);
+                input.Keyboard.KeyUp(VirtualKeyCode.RIGHT);
+
+                input.Keyboard.KeyDown(VirtualKeyCode.LEFT);
+                input.Keyboard.Sleep(1000);
+                input.Keyboard.KeyUp(VirtualKeyCode.LEFT);
 
             }
+
+
 
             //проверка, что игра окончена, проверка окна с результатом
             Assert.IsTrue(Convert.ToInt32(score.Properties.Name.Substring(6)) > 0);

@@ -1,15 +1,38 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<ClassDiagram MajorVersion="1" MinorVersion="1">
+<ClassDiagram MajorVersion="1" MinorVersion="1" MembersFormat="NameAndType">
   <Class Name="ArcBall.Ball" BaseTypeListCollapsed="true">
-    <Position X="12.5" Y="2" Width="1.5" />
+    <Position X="13.25" Y="0.5" Width="1.5" />
+    <Members>
+      <Field Name="curCollision" Hidden="true" />
+      <Field Name="g" Hidden="true" />
+      <Field Name="power" Hidden="true" />
+      <Field Name="radius" Hidden="true" />
+      <Field Name="slideX" Hidden="true" />
+      <Field Name="speed" Hidden="true" />
+      <Field Name="x" Hidden="true" />
+      <Field Name="x_prev" Hidden="true" />
+      <Field Name="y" Hidden="true" />
+      <Field Name="y_prev" Hidden="true" />
+    </Members>
+    <Compartments>
+      <Compartment Name="Fields" Collapsed="true" />
+    </Compartments>
     <TypeIdentifier>
-      <HashCode>AAAIAAgACIAAAoAAAADAAAABQAEAAQAJAEBkgAABZAA=</HashCode>
+      <HashCode>AAAIAAgACIAAAoAAAADAAAABQAEAAQAJAABkAAABZAA=</HashCode>
       <FileName>Ball.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" Collapsed="true" />
   </Class>
   <Class Name="ArcBall.Block">
-    <Position X="5.5" Y="6.5" Width="1.5" />
+    <Position X="11.5" Y="0.5" Width="1.5" />
+    <Members>
+      <Field Name="g" Hidden="true" />
+      <Field Name="health" Hidden="true" />
+      <Field Name="sizeX" Hidden="true" />
+      <Field Name="sizeY" Hidden="true" />
+      <Field Name="x" Hidden="true" />
+      <Field Name="y" Hidden="true" />
+    </Members>
     <TypeIdentifier>
       <HashCode>AAAACACAAAAAAgAAAAAAAAAAAAAAQAAIEADgAAAAYAg=</HashCode>
       <FileName>Block.cs</FileName>
@@ -17,7 +40,10 @@
     <Lollipop Position="0.2" />
   </Class>
   <Class Name="ArcBall.BonusBlock">
-    <Position X="5.5" Y="11.25" Width="1.5" />
+    <Position X="11.5" Y="4" Width="1.5" />
+    <Members>
+      <Field Name="bonus" Hidden="true" />
+    </Members>
     <TypeIdentifier>
       <HashCode>ABAAAAAAAAAAAgAAAAACAAAAAgAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>BonusBlock.cs</FileName>
@@ -25,17 +51,41 @@
     <Lollipop Position="0.2" />
   </Class>
   <Class Name="ArcBall.Field" BaseTypeListCollapsed="true">
-    <Position X="8" Y="5.25" Width="1.5" />
+    <Position X="16.75" Y="0.5" Width="1.75" />
+    <Members>
+      <Field Name="ball" Hidden="true" />
+      <Field Name="blocks" Hidden="true" />
+      <Field Name="buf" Hidden="true" />
+      <Field Name="g" Hidden="true" />
+      <Field Name="leftWall" Hidden="true" />
+      <Field Name="lifes" Hidden="true" />
+      <Field Name="platform" Hidden="true" />
+      <Field Name="rightWall" Hidden="true" />
+      <Field Name="score" Hidden="true" />
+      <Field Name="sizeX" Hidden="true" />
+      <Field Name="sizeY" Hidden="true" />
+      <Field Name="t" Hidden="true" />
+      <Field Name="topWall" Hidden="true" />
+    </Members>
     <TypeIdentifier>
-      <HashCode>BAEEgAAGAAAAAAgAAAAICAAEAAIAABCKGASAAAgEBIA=</HashCode>
+      <HashCode>BAEEgAAGAAQAAAgAAAAICAAEAAIAABCKGASAgAgEBIA=</HashCode>
       <FileName>Field.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" Collapsed="true" />
   </Class>
   <Class Name="ArcBall.Platform" BaseTypeListCollapsed="true">
-    <Position X="10.5" Y="2" Width="1.5" />
+    <Position X="15" Y="0.5" Width="1.5" />
+    <Members>
+      <Field Name="fieldSizeX" Hidden="true" />
+      <Field Name="g" Hidden="true" />
+      <Field Name="sizeX" Hidden="true" />
+      <Field Name="sizeY" Hidden="true" />
+      <Field Name="speed" Hidden="true" />
+      <Field Name="x" Hidden="true" />
+      <Field Name="y" Hidden="true" />
+    </Members>
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAIAAAgAAAAAAAAABAAAAQQAJEADggAAAYAA=</HashCode>
+      <HashCode>AAAAAAAAAIAAAgAAAAAAAAABAAAAQQAJEADgAAAAYAA=</HashCode>
       <FileName>Platform.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" Collapsed="true" />
@@ -48,7 +98,15 @@
     </TypeIdentifier>
   </Interface>
   <Interface Name="ArcBall.IBall">
-    <Position X="5.25" Y="3" Width="1.5" />
+    <Position X="5" Y="3" Width="1.5" />
+    <InheritanceLine Type="ArcBall.IGameObject" FixedToPoint="true">
+      <Path>
+        <Point X="3.75" Y="2.247" />
+        <Point X="3.75" Y="2.625" />
+        <Point X="5.375" Y="2.625" />
+        <Point X="5.375" Y="3" />
+      </Path>
+    </InheritanceLine>
     <TypeIdentifier>
       <HashCode>AAAIAAAAAIAAAAAAAAAAAAABAAAAAAABAAAAAAABBAA=</HashCode>
       <FileName>Interfaces.cs</FileName>
@@ -76,7 +134,7 @@
     </TypeIdentifier>
   </Interface>
   <Interface Name="ArcBall.IField">
-    <Position X="8" Y="2" Width="1.5" />
+    <Position X="7" Y="0.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAEgAAEAAAAAAgAAAAAAAAAAAAAAAACCAAAAAAAAIA=</HashCode>
       <FileName>Interfaces.cs</FileName>

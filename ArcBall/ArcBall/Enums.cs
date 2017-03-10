@@ -27,7 +27,8 @@ namespace ArcBall
     {
         None = 0,
         Left = 1,
-        Right = 2
+        Right = 2,
+        Space = 3
     }
 
     //перечисление сторон блока, с которыми может столкнуться шар

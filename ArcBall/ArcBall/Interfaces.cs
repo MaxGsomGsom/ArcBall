@@ -14,7 +14,7 @@ namespace ArcBall
         void Draw();
     }
 
-    public interface IGameObjectSquare: IGameObject
+    public interface IGameObjectSquare : IGameObject
     {
         int Size_X { get; set; }
         int Size_Y { get; set; }
@@ -27,15 +27,15 @@ namespace ArcBall
         int Speed { get; set; }
 
         bool TestIntersection(IGameObjectSquare obj);
-        void Slide();
-        void Move();
+        void Slide(Keys key);
+        void Move(Keys key);
     }
 
     public interface IPlatform : IGameObjectSquare
     {
         int Speed { get; set; }
 
-        void Move();
+        void Move(Keys key);
     }
 
     public interface IBlock : IGameObjectSquare

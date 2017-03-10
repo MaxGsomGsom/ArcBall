@@ -20,10 +20,6 @@ namespace ArcBall
 
         int fieldSizeX;
 
-        //функция считывает нажатую клавишу
-        [DllImport("USER32.dll")]
-        static extern short GetAsyncKeyState(int keyCode);
-
         //конструктор
         public Platform(Graphics g, double x, double y, int sizeX, int sizeY, int fieldSizeX)
         {
@@ -76,13 +72,8 @@ namespace ArcBall
         }
 
         //функция передвижения платформы в зависимости от нажатой клавиши
-        public void Move()
+        public void Move(Keys key)
         {
-            //определение клавиши
-            Keys key = Keys.None;
-            if (GetAsyncKeyState(0x25) != 0) key = Keys.Left;
-            else if (GetAsyncKeyState(0x27) != 0) key = Keys.Right;
-
             //задание скорости движения
             if (key == Keys.Left && x > 0)
             {
