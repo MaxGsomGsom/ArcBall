@@ -1,6 +1,4 @@
-﻿//#define TEST 
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Runtime.InteropServices;
@@ -18,21 +16,6 @@ namespace ArcBall
         Collision curCollision; //индикатор столкновения с объектом
         double slideX; //скольжение по оси х
         int power; //сила удара шара
-
-
-        //функция считывает нажатую клавишу
-        internal Dictionary<int, short> keyPressed = new Dictionary<int, short>();
-#if !TEST
-        [DllImport("USER32.dll")]
-        static extern short GetAsyncKeyState(int keyCode);
-#else
-        internal short GetAsyncKeyState(int keyCode)
-        {
-            if (keyPressed.ContainsKey(keyCode))
-                return keyPressed[keyCode];
-            else return 0;
-        }
-#endif
 
 
         //конструктор
@@ -104,15 +87,8 @@ namespace ArcBall
         }
 
         //функция изменения угла движения шара, при столкновеннии с движущейся платформой
-        public void Slide()
+        public void Slide(Keys key)
         {
-            //определение нажатия клавиши
-            Keys key = Keys.None; // 1
-            if (GetAsyncKeyState(0x25) != 0) // 2
-                key = Keys.Left; // 3
-            else if (GetAsyncKeyState(0x27) != 0) // 4
-                key = Keys.Right; // 5
-
             //задание угла
             if (key == Keys.Left) // 6
                 slideX = -0.5; // 7
@@ -121,13 +97,13 @@ namespace ArcBall
         }
 
         //функция движения шара
-        public void Move()
+        public void Move(Keys key)
         {
             //определение скорости движения по предыдущим и текущим координатам
             double length = Math.Sqrt(Math.Abs(y - y_prev) * Math.Abs(y - y_prev) + Math.Abs(x - x_prev) * Math.Abs(x - x_prev)); // 1
 
             //если скорость = 0, то ожидание нажатия клавиши пробел
-            if (length == 0 && GetAsyncKeyState(0x20) != 0) // 2
+            if (length == 0 && key == Keys.Space) // 2
             {
                 x_prev = x + (new Random()).Next(-2, 2); // 3
                 y_prev = y + 1;

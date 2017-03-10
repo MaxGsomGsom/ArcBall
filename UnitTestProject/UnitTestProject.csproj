@@ -68,8 +68,11 @@
   </Choose>
   <ItemGroup>
     <Compile Include="UnitTestIntegration.cs" />
-    <Compile Include="UnitTests.cs" />
+    <Compile Include="UnitTestsBall.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="UnitTestsField.cs" />
+    <Compile Include="UnitTestsPlatform.cs" />
+    <Compile Include="UnitTestsBlock.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\ArcBall\ArcBall.csproj">

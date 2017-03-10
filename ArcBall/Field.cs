@@ -4,6 +4,7 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -64,11 +65,29 @@ namespace ArcBall
         }
 
 
+        //определение нажатия клавиши
+        [DllImport("USER32.dll")]
+        static extern short GetAsyncKeyState(int keyCode);
+
+        private Keys DetectKeys()
+        {
+            Keys key = Keys.None;
+            if (GetAsyncKeyState(0x25) != 0)
+                key = Keys.Left;
+            else if (GetAsyncKeyState(0x27) != 0)
+                key = Keys.Right;
+            else if (GetAsyncKeyState(0x20) != 0)
+                key = Keys.Space;
+
+            return key;
+        }
+
+
         //функция, просчитывающая один игровой кадр
-        private void GameStep(object sender, EventArgs e)
+        internal void GameStep(object sender, EventArgs e)
         {
             //просчет движения платформы
-            platform.Move();
+            platform.Move(DetectKeys());
 
             bool isCollision = false;
             //заливка поля белым фоном
@@ -93,19 +112,20 @@ namespace ArcBall
                         score += 100;
                         //применение бонуса
                         if (b is IBonusBlock) (b as IBonusBlock).ActivateBonus(this);
-                        //проверка на окончание уровня
-                        if (blocks.Count == 0) NextLevel(this, new EventArgs());
                     }
 
                     break;
                 }
             }
 
+            //проверка на окончание уровня
+            if (blocks.Count == 0) NextLevel(this, new EventArgs());
+
             //проверка столкновения шара с платформой
             if (!isCollision)
             {
                 isCollision = ball.TestIntersection(platform);
-                if (isCollision) ball.Slide();
+                if (isCollision) ball.Slide(DetectKeys());
             }
 
             //проверка столкновения со стенами поля
@@ -123,14 +143,14 @@ namespace ArcBall
             }
 
             //если шар улетел вниз, вычитание жизни
-            if (ball.Y > sizeY || ball.Y < -100 || ball.X < -100 || ball.X > sizeX + 100)
+            if (ball.Y > sizeY + 100 || ball.Y < -100 || ball.X < -100 || ball.X > sizeX + 100)
             {
                 LoseBall();
             }
             else
             {
                 //просчет движения шара и его отрисовка
-                ball.Move();
+                ball.Move(DetectKeys());
                 ball.Draw();
             }
 
@@ -151,9 +171,8 @@ namespace ArcBall
 
         }
 
-
         //функция потери шара
-        private void LoseBall()
+        internal void LoseBall()
         {
             lifes--;
 
@@ -167,7 +186,6 @@ namespace ArcBall
                 Timer.Stop();
                 GameOver(this, new EventArgs());
 
-
             }
         }
 
@@ -176,8 +194,13 @@ namespace ArcBall
         //каждый блок описывается строкой в файле: координата Х - координата У - ширина - высота - прочность - тип бонуса
         private void LoadLevel(int level)
         {
-            //считывание всех строк
-            string[] lines = File.ReadAllLines("levels\\" + level + ".txt");
+            string[] lines;
+            try
+            {
+                //считывание всех строк
+                lines = File.ReadAllLines("levels\\" + level + ".txt");
+            }
+            catch { throw new IOException("Level loading error"); }
 
             //парсинг каждой строки и создание блока
             for (int i = 0; i < lines.Length; i++)
